@@ -1,0 +1,111 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1>It works!</h1>
+
+    <button>call</button>
+
+    <div style="background-color: red; width:400px; height:400px">
+
+        <video id="myFace" style="background-color:white ;" autoplay="true" playsinline="true" width="300" height="300">  videocall </video> <br>
+        <button id="mute">mute</button> <br>
+        <button id="turnoffcam">turnOffCam</button>
+    </div>
+    
+
+</body>
+
+<script>
+
+let myStream;
+let myFace=document.getElementById("myFace");
+let muteBtn=document.getElementById("mute");
+let cameraBtn=document.getElementById("turnoffcam");
+let muted = false;
+let cameraoff=false;
+
+
+async function getCameras(){ //enummerate 형태로 디바이스 가져오기
+    try{
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        console.log(devices[0]); //filter와 option append를 사용할 수 있다.
+        return devices[0].deviceId;
+        
+        
+
+    }catch(e){
+        console.log(e);
+    }
+}
+
+function handlemuteBtn(){
+
+    myStream.getAudioTracks().forEach(track => {
+        track.enalbled=!element.enalbled;
+    });
+
+    if(!muted){
+        muteBtn.innerText="Unmute";
+        muted=true;
+    }else{
+        muteBtn.innerText="Mute";
+        muted=false;
+    }
+}
+function handlecameraBtn(){
+    if(!cameraoff){
+        cameraBtn.innerText="turnOffCam";
+        cameraoff=true;
+    }else{
+        cameraBtn.innerText="turnOnCam";
+        cameraoff=false;
+    }
+
+}
+
+muteBtn.addEventListener("click",handlemuteBtn);
+cameraBtn.addEventListener("click",handlecameraBtn);
+
+getMedia();
+
+async function getMedia(){ // acess to Camera, and Audio
+    try{ 
+
+        myStream = await navigator.mediaDevices.getUserMedia({
+            audio:true,
+            video:true
+        });
+        console.log(myStream);
+        myFace.srcObject=myStream;
+
+    }catch(e){
+        console.log(e);
+        let id=await getCameras();
+        const initialConstrains={audio:{deviceId:id},video:false};//device id로 설정
+
+        try{
+
+            myStream=await navigator.mediaDevices.getUserMedia(initialConstrains);
+        }catch(e){
+            console.log(e);
+        }
+
+
+    }
+}
+
+
+</script>
+
+</html>
+
+<!-- https://nomadcoders.co/noom/lectures/3084 -->
